@@ -1,23 +1,12 @@
 {
-  "version": 2,
-  "name": "zeus-balneario",
-  "builds": [
-    {
-      "src": "src/index.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/src/index.html"
-    }
-  ],
-  "functions": {},
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/",
       "destination": "/src/index.html"
+    },
+    {
+      "source": "/src/(.*)",
+      "destination": "/src/$1"
     }
   ],
   "headers": [
@@ -39,6 +28,5 @@
         }
       ]
     }
-  ],
-  "trailingSlash": false
+  ]
 }
