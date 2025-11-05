@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Grilla Real - Destacar HOY | Zeus Balneario</title>
+    <style>
+        /* Variables CSS del sistema original */
+        :root {
+          --color-primary: #1976D2;
+          --color-secondary: #FF8F00;
+          --color-accent: #00BCD4;
+          --color-available: #A8E6CF;
+          --color-occupied: #FF7043;
+          --color-today: #7986CB;
+          --bg-primary: #FFFFFF;
+          --bg-secondary: #F5F5F5;
+          --bg-dark: #263238;
+          --text-primary: #212121;
+          --text-secondary: #757575;
+          --text-light: #FFFFFF;
+          --border-color: #E0E0E0;
+          --border-radius: 8px;
+          --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
+          --spacing-sm: 8px;
+          --spacing-md: 16px;
+          --spacing-lg: 24px;
+          --cell-size: 60px;
+          --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          --font-size-sm: 12px;
+          --font-size-base: 14px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            font-size: var(--font-size-base);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .test-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            background: #f8fafc;
+        }
+
+        .test-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            text-align: center;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border-radius: 12px;
+        }
+
+        /* ========== ESTILOS GRILLA ORIGINAL ========== */
+        .grid-container {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .grid-wrapper {
+            overflow: auto;
+            max-height: 400px;
+            position: relative;
+        }
+
+        .calendar-grid {
+            display: grid;
+            gap: 1px;
+            background: var(--border-color);
+            min-width: min-content;
+        }
+
+        .grid-header-corner {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            padding: var(--spacing-sm);
+            font-weight: 700;
+            text-align: center;
+            position: sticky;
+            left: 0;
+            top: 0;
+            z-index: 30;
+            border-right: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .grid-header-date {
+            background: var(--color-primary);
+            color: var(--text-light);
+            padding: var(--spacing-sm);
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            white-space: nowrap;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .grid-header-date.today {
+            background: var(--color-today);
+            font-weight: 700;
+        }
+
+        .grid-header-unit {
+            background: var(--color-accent);
+            color: var(--text-light);
+            padding: var(--spacing-sm);
+            font-weight: 700;
+            text-align: center;
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            border-right: 2px solid var(--border-color);
+        }
+
+        .grid-cell {
+            background: var(--bg-primary);
+            min-width: var(--cell-size);
+            min-height: var(--cell-size);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            user-select: none;
+        }
+
+        .grid-cell.available {
+            background: var(--color-available);
+        }
+
+        .grid-cell.occupied {
+            background: var(--color-occupied);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1;
+            overflow: hidden;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            padding: 2px;
+        }
+
+        .grid-cell:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ========== NUEVOS ESTILOS PARA DESTACAR HOY ========== */
+        
+        /* Opción 1: Dorado elegante */
+        .today-option-1 .grid-cell.today-column {
+            border: 3px solid #f59e0b !important;
+            box-shadow: inset 0 0 8px rgba(245, 158, 11, 0.3), 0 0 12px rgba(245, 158, 11, 0.4) !important;
+            position: relative;
+        }
+
+        .today-option-1 .grid-cell.today-column::before {
+            content: '⭐';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.7rem;
+            z-index: 5;
+        }
+
+        .today-option-1 .grid-header-date.today {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+            color: #92400e !important;
+            border: 3px solid #d97706 !important;
+            position: relative;
+        }
+
+        .today-option-1 .grid-header-date.today::before {
+            content: '👑 ';
+        }
+
+        /* Opción 2: Verde vibrante con animación */
+        .today-option-2 .grid-cell.today-column {
+            border: 3px solid #059669 !important;
+            animation: pulse-today-2 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes pulse-today-2 {
+            0% { box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 16px rgba(16, 185, 129, 0.8); }
+            100% { box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+        }
+
+        .today-option-2 .grid-cell.today-column::after {
+            content: 'HOY';
+            position: absolute;
+            bottom: 1px;
+            right: 1px;
+            font-size: 0.6rem;
+            background: #059669;
+            color: white;
+            padding: 1px 3px;
+            border-radius: 3px;
+            font-weight: 600;
+            z-index: 5;
+        }
+
+        .today-option-2 .grid-header-date.today {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+            color: white !important;
+            animation: glow-header-2 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow-header-2 {
+            from { box-shadow: 0 2px 8px rgba(16, 185, 129, 0.5); }
+            to { box-shadow: 0 4px 16px rgba(16, 185, 129, 0.8); }
+        }
+
+        .today-option-2 .grid-header-date.today::before {
+            content: '📅 ';
+        }
+
+        /* Opción 3: Púrpura elegante */
+        .today-option-3 .grid-cell.today-column {
+            border: 3px solid #7c3aed !important;
+            background-image: linear-gradient(45deg, rgba(139, 92, 246, 0.1) 25%, transparent 25%, transparent 50%, rgba(139, 92, 246, 0.1) 50%, rgba(139, 92, 246, 0.1) 75%, transparent 75%, transparent) !important;
+            background-size: 8px 8px;
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.4) !important;
+            position: relative;
+        }
+
+        .today-option-3 .grid-cell.today-column::before {
+            content: '💜';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1rem;
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .today-option-3 .grid-header-date.today {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+            color: white !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            border: 2px solid #6d28d9 !important;
+        }
+
+        .today-option-3 .grid-header-date.today::before {
+            content: '👑 ';
+        }
+
+        /* Opción 4: Azul océano con ondas */
+        .today-option-4 .grid-cell.today-column {
+            border: 3px solid #0284c7 !important;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(14, 165, 233, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(14, 165, 233, 0.1) 0%, transparent 50%) !important;
+            animation: wave-effect 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes wave-effect {
+            0%, 100% { 
+                box-shadow: 0 0 8px rgba(2, 132, 199, 0.4);
+                transform: translateY(0px);
+            }
+            50% { 
+                box-shadow: 0 0 16px rgba(2, 132, 199, 0.6);
+                transform: translateY(-1px);
+            }
+        }
+
+        .today-option-4 .grid-cell.today-column::after {
+            content: '🌊';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 0.8rem;
+            opacity: 0.6;
+            z-index: 5;
+        }
+
+        .today-option-4 .grid-header-date.today {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+            color: white !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .today-option-4 .grid-header-date.today::before {
+            content: '🏖️ ';
+        }
+
+        .today-option-4 .grid-header-date.today::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shine 3s ease-in-out infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        /* Controles */
+        .controls {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem 0.5rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e0f2fe, #81d4fa);
+            border: 2px solid #0288d1;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .info-text {
+            color: #01579b;
+            font-weight: 600;
+        }
+
+        .current-date {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: #92400e;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-grid {
+                font-size: 0.8rem;
+            }
+            
+            .grid-cell {
+                min-width: 50px;
+                min-height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏖️ Zeus Balneario - Test Grilla Real HOY</h1>
+        
+        <div class="info-box">
+            <div class="info-text">
+                🎯 Probando destacar HOY con la grilla real del sistema<br>
+                📅 Usando la misma estructura y estilos que en Zeus Balneario
+            </div>
+        </div>
+
+        <div class="current-date" id="current-date">
+            Fecha HOY: <span id="today-display"></span>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="switchOption(1)">👑 Opción 1: Dorado Real</button>
+            <button class="btn" onclick="switchOption(2)">📅 Opción 2: Verde Animado</button>
+            <button class="btn" onclick="switchOption(3)">💜 Opción 3: Púrpura Elegante</button>
+            <button class="btn" onclick="switchOption(4)">🏖️ Opción 4: Azul Océano</button>
+        </div>
+
+        <!-- Opción 1: Dorado -->
+        <div class="test-section today-option-1" id="option-1">
+            <div class="test-title">👑 Opción 1: Dorado Real - Estilo Premium</div>
+            <div class="grid-container">
+                <div class="grid-wrapper">
+                    <div class="calendar-grid" id="grid-1"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opción 2: Verde animado -->
+        <div class="test-section today-option-2" id="option-2">
+            <div class="test-title">📅 Opción 2: Verde Animado - Pulso Sutil</div>
+            <div class="grid-container">
+                <div class="grid-wrapper">
+                    <div class="calendar-grid" id="grid-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opción 3: Púrpura elegante -->
+        <div class="test-section today-option-3" id="option-3">
+            <div class="test-title">💜 Opción 3: Púrpura Elegante - Patrón Sutil</div>
+            <div class="grid-container">
+                <div class="grid-wrapper">
+                    <div class="calendar-grid" id="grid-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opción 4: Azul océano -->
+        <div class="test-section today-option-4" id="option-4">
+            <div class="test-title">🏖️ Opción 4: Azul Océano - Efecto Ola</div>
+            <div class="grid-container">
+                <div class="grid-wrapper">
+                    <div class="calendar-grid" id="grid-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generar fechas (5 días: 2 antes + hoy + 2 después)
+        function generateDates() {
+            const dates = [];
+            const today = new Date();
+            
+            for (let i = -2; i <= 2; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() + i);
+                const dateStr = date.toISOString().split('T')[0];
+                const isToday = i === 0;
+                
+                dates.push({
+                    date: dateStr,
+                    display: formatDateDisplay(dateStr),
+                    isToday: isToday
+                });
+            }
+            
+            return dates;
+        }
+
+        function formatDateDisplay(dateStr) {
+            const date = new Date(dateStr);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            return `${day}-${month}`;
+        }
+
+        function getTodayDisplay() {
+            const today = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            return today.toLocaleDateString('es-ES', options);
+        }
+
+        // Generar grilla para una opción específica
+        function generateGrid(gridId, dates) {
+            const grid = document.getElementById(gridId);
+            const numUnits = 9; // S1-S9 como en la imagen
+            
+            // Configurar columnas: 1 para unidades + 5 para fechas
+            grid.style.gridTemplateColumns = `80px repeat(${dates.length}, 60px)`;
+            grid.innerHTML = '';
+
+            // Header esquina
+            const corner = document.createElement('div');
+            corner.className = 'grid-header-corner';
+            corner.textContent = 'S';
+            grid.appendChild(corner);
+
+            // Headers de fechas
+            dates.forEach(dateInfo => {
+                const header = document.createElement('div');
+                header.className = 'grid-header-date';
+                if (dateInfo.isToday) {
+                    header.classList.add('today');
+                }
+                header.textContent = dateInfo.display;
+                grid.appendChild(header);
+            });
+
+            // Filas de unidades
+            for (let unit = 1; unit <= numUnits; unit++) {
+                // Header de unidad
+                const unitHeader = document.createElement('div');
+                unitHeader.className = 'grid-header-unit';
+                unitHeader.textContent = `S${unit}`;
+                grid.appendChild(unitHeader);
+
+                // Celdas para cada fecha
+                dates.forEach(dateInfo => {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    
+                    if (dateInfo.isToday) {
+                        cell.classList.add('today-column');
+                    }
+
+                    // Simular algunas ocupadas y otras libres
+                    const isOccupied = Math.random() > 0.6; // 40% ocupadas
+                    
+                    if (isOccupied) {
+                        cell.classList.add('occupied');
+                        // Simular iniciales de cliente
+                        const initials = ['VC', 'SM', 'CV', 'VR', 'SV'][Math.floor(Math.random() * 5)];
+                        cell.textContent = initials;
+                    } else {
+                        cell.classList.add('available');
+                    }
+
+                    grid.appendChild(cell);
+                });
+            }
+        }
+
+        // Cambiar entre opciones
+        function switchOption(optionNumber) {
+            // Ocultar todas las opciones
+            for (let i = 1; i <= 4; i++) {
+                const option = document.getElementById(`option-${i}`);
+                option.style.display = 'none';
+            }
+            
+            // Mostrar la opción seleccionada
+            const selectedOption = document.getElementById(`option-${optionNumber}`);
+            selectedOption.style.display = 'block';
+            
+            // Scroll suave hacia la opción
+            setTimeout(() => {
+                selectedOption.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
+        // Inicializar
+        window.addEventListener('load', () => {
+            const dates = generateDates();
+            
+            // Mostrar fecha actual
+            document.getElementById('today-display').textContent = getTodayDisplay();
+            
+            // Generar grillas para todas las opciones
+            for (let i = 1; i <= 4; i++) {
+                generateGrid(`grid-${i}`, dates);
+            }
+            
+            // Mostrar solo la primera opción inicialmente
+            switchOption(1);
+        });
+    </script>
+</body>
+</html>

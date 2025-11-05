@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema de gestión de alquileres para Zeus Balneario - Necochea, Argentina">
+  <meta name="author" content="Zeus Balneario">
+  <title>Zeus Balneario - Sistema de Gestión | Necochea</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
+  
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/styles.css?v=46">
+  <link rel="stylesheet" href="css/auth-styles.css">
+</head>
+<body>
+  
+  <!-- Header Principal -->
+  <header class="main-header">
+    <div class="header-content">
+      <h1>🏖️ ZEUS BALNEARIO</h1>
+      <p class="subtitle">Sistema de Gestión - Necochea, Argentina</p>
+      
+      <!-- Barra de Búsqueda Global -->
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            id="global-search" 
+            class="search-input" 
+            placeholder="Buscar reservas por nombre, DNI, teléfono o unidad..."
+            autocomplete="off"
+            aria-label="Búsqueda global de reservas"
+          >
+          <button id="clear-search" class="clear-search-btn" aria-label="Limpiar búsqueda" style="display: none;">✕</button>
+          <kbd class="search-shortcut">Ctrl+K</kbd>
+        </div>
+        
+        <!-- Resultados de Búsqueda -->
+        <div id="search-results" class="search-results" style="display: none;">
+          <div class="search-results-header">
+            <span class="search-results-count"></span>
+            <button id="close-search-results" class="close-results-btn" aria-label="Cerrar resultados">✕</button>
+          </div>
+          <div id="search-results-list" class="search-results-list">
+            <!-- Resultados se renderizan aquí dinámicamente -->
+          </div>
+          <div class="search-results-footer">
+            <small>Usa ↑ ↓ para navegar • Enter para abrir • ESC para cerrar</small>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Botón de Privacidad -->
+      <button id="privacy-toggle-btn" class="btn-privacy-toggle" title="Ocultar/Mostrar información financiera">
+        <span class="privacy-icon">👁️</span>
+        <span class="privacy-label">Ocultar montos</span>
+      </button>
+      
+      <button id="reconfigure-btn" class="btn-reconfigure" title="Reconfigurar establecimiento">
+        ⚙️ Reconfigurar
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal -->
+  <main class="main-container">
+    
+    <!-- Pestañas de Recursos -->
+    <section class="tabs-section">
+      <div class="tabs-wrapper">
+        <div id="tabs-container" class="tabs-container" role="tablist" aria-label="Tipos de recursos">
+          <!-- Las pestañas se renderizan dinámicamente -->
+        </div>
+        <button id="manage-pricing-btn" class="btn-pricing" title="Gestionar tarifas del recurso actual">
+          💰 Gestionar Tarifas
+        </button>
+      </div>
+    </section>
+    
+    <!-- Dashboard Container (Hidden by default) -->
+    <div id="dashboard-container" class="dashboard-container" style="display: none;">
+      <!-- Se renderiza dinámicamente -->
+    </div>
+
+    <!-- Quick View Container (Hidden by default) -->
+    <div id="quick-view-container" class="quick-view-container" style="display: none;">
+      <!-- Se renderiza dinámicamente -->
+    </div>
+
+    <!-- Resource Content Container (Grid, Stats, etc.) -->
+    <div id="resource-content" class="resource-content">
+
+    <!-- Resumen de Disponibilidad -->
+    <section class="stats-section">
+      <div class="stats-container">
+        <div class="stats-box">
+          <h3>📊 Resumen de Hoy</h3>
+          <div id="availability-stats" class="availability-stats">
+            <!-- Las estadísticas se renderizan dinámicamente -->
+          </div>
+        </div>
+        
+        <div class="stats-box">
+          <h3>🔍 Consultar Disponibilidad</h3>
+          <div class="date-availability-checker">
+            <label for="check-date">Seleccionar fecha:</label>
+            <input type="date" id="check-date" class="date-input">
+            <button id="check-availability-btn" class="btn-check">Ver Disponibilidad</button>
+            <div id="date-availability-stats" class="availability-stats">
+              <p class="info-message">Selecciona una fecha para ver la disponibilidad</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Leyenda de Colores -->
+    <section class="legend-section">
+      <div class="legend">
+        <span class="legend-item">
+          <span class="legend-color available"></span>
+          <span class="legend-label">Disponible (Verde claro)</span>
+        </span>
+        <span class="legend-item">
+          <span class="legend-color occupied"></span>
+          <span class="legend-label">Ocupado (Colores de reservas)</span>
+        </span>
+        <span class="legend-item">
+          <span class="legend-color selected"></span>
+          <span class="legend-label">Seleccionado (Amarillo)</span>
+        </span>
+        <span class="legend-item">
+          <span class="legend-color today"></span>
+          <span class="legend-label">Hoy (Púrpura)</span>
+        </span>
+      </div>
+    </section>
+
+    <!-- Selector de Período -->
+    <section class="period-selector-section">
+      <div class="period-controls">
+        <button id="prev-period" class="btn-nav" aria-label="Período anterior">
+          ← Anterior
+        </button>
+        <div class="period-display">
+          <span id="period-range">Cargando...</span>
+        </div>
+        <button id="next-period" class="btn-nav" aria-label="Siguiente período">
+          Siguiente →
+        </button>
+      </div>
+    </section>
+
+    <!-- Grilla del Calendario -->
+    <section class="grid-section">
+      <div id="grid-container" class="grid-container">
+        <!-- La grilla se renderiza dinámicamente -->
+      </div>
+    </section>
+
+    <!-- Botón de Acción Rápida (opcional) -->
+    <section class="action-section">
+      <button id="quick-rental-btn" class="btn-action" aria-label="Información sobre nuevo alquiler">
+        ℹ️ Para crear un alquiler, haz click en una celda verde
+      </button>
+    </section>
+
+    <!-- Tabla de Reservas -->
+    <section class="rentals-table-section">
+      <h2>📋 Lista de Reservas Activas</h2>
+      
+      <!-- Filtros -->
+      <div class="filters-container">
+        <div class="filter-group">
+          <label for="filter-month">📅 Mes:</label>
+          <select id="filter-month">
+            <option value="">Todos los meses</option>
+            <option value="2025-11">Noviembre 2025</option>
+            <option value="2025-12">Diciembre 2025</option>
+            <option value="2026-01">Enero 2026</option>
+            <option value="2026-02">Febrero 2026</option>
+            <option value="2026-03">Marzo 2026</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="filter-date">🗓️ Fecha de Ingreso:</label>
+          <input type="date" id="filter-date" placeholder="Seleccionar fecha">
+        </div>
+        
+        <div class="filter-group">
+          <label for="filter-payment">💳 Estado de Pago:</label>
+          <select id="filter-payment">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">⏳ Pendiente</option>
+            <option value="parcial">⚠️ Pago Parcial</option>
+            <option value="pagado">✅ Pagado</option>
+          </select>
+        </div>
+        
+        <button id="clear-filters" class="btn-clear-filters">🔄 Limpiar Filtros</button>
+      </div>
+      
+      <div id="rentals-table-container">
+        <!-- La tabla se renderiza dinámicamente -->
+      </div>
+    </section>
+
+    <!-- Botones de Backup -->
+    <section class="backup-section">
+      <div class="backup-container">
+        <button id="export-data-btn" class="btn-backup btn-export" title="Descargar backup de todas las reservas, pagos y tarifas">
+          💾 Exportar Datos
+        </button>
+        <button id="import-data-btn" class="btn-backup btn-import" title="Cargar backup completo desde un archivo">
+          📂 Importar Datos
+        </button>
+        <input type="file" id="import-file-input" accept=".json" style="display: none;">
+        <span id="backup-info" class="backup-info"></span>
+      </div>
+      <div class="backup-notice">
+        <p>⚠️ <strong>Importante:</strong> Para importar correctamente, el establecimiento destino debe tener <strong>exactamente la misma configuración</strong> que el de origen:</p>
+        <ul>
+          <li>✓ Misma cantidad de sombrillas</li>
+          <li>✓ Misma cantidad de carpas</li>
+          <li>✓ Misma cantidad de estacionamientos</li>
+        </ul>
+        <p><small>Si la configuración no coincide, las reservas pueden quedar asignadas a recursos incorrectos.</small></p>
+      </div>
+    </section>
+    
+    </div> <!-- End resource-content -->
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <p>&copy; 2025-2026 Zeus Balneario - Necochea, Argentina</p>
+    <p class="footer-tech">Desarrollado con HTML5, CSS3 y JavaScript ES6+</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="types/index.js?v=46"></script>
+  <script src="js/config.js?v=46"></script>
+  <script src="js/setup.js?v=46"></script>
+  <script src="js/storage.js?v=46"></script>
+  <!-- Sistema de Autenticación (cargar primero) -->
+  <script src="js/auth.js"></script>
+  
+  <!-- Sistema de Optimización de Performance -->
+  <script src="js/performance.js"></script>
+  
+  <!-- Sistema de Backup y Exportación -->
+  <script src="js/backup.js"></script>
+  
+  <script src="js/pricing.js?v=46"></script>
+  <script src="js/payments.js?v=46"></script>
+  <script src="js/clients.js?v=46"></script>
+  <script src="js/pool.js?v=46"></script>
+  <script src="js/rentals.js?v=46"></script>
+  <script src="js/search.js?v=46"></script>
+  <script src="js/analytics.js?v=46"></script>
+  <script src="js/charts.js?v=46"></script>
+  <script src="js/dashboard.js?v=46"></script>
+  <script src="js/ui.js?v=46"></script>
+  <script src="app.js?v=46"></script>
+
+</body>
+</html>

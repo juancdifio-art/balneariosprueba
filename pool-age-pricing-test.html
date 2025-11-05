@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏊 Test - Sistema de Precios por Edad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 32px 64px rgba(0,0,0,0.15);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .header h1 {
+            color: #1e293b;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .config-section {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 2px solid #e2e8f0;
+        }
+
+        .config-section h3 {
+            color: #1e293b;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .price-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .price-item .age-label {
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .price-item .age-range {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .price-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .price-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .simulator-section {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 2px solid #0891b2;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .people-counter {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .counter-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .counter-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .counter-input {
+            width: 60px;
+            padding: 0.5rem;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e40af;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .result-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .breakdown-item {
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .breakdown-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-bottom: 0.25rem;
+        }
+
+        .breakdown-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .total-amount {
+            font-size: 2rem;
+            font-weight: 900;
+            margin: 1rem 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .age-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1rem 0;
+            color: #1e40af;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="header">
+            <h1>🏊 Test: Sistema de Precios por Edad</h1>
+            <p>Prueba de funcionalidad para diferenciar precios entre adultos y menores</p>
+        </div>
+
+        <!-- Configuración de Precios -->
+        <div class="config-section">
+            <h3>⚙️ Configuración de Precios</h3>
+            
+            <!-- Configuración de Edad Límite -->
+            <div style="background: rgba(59, 130, 246, 0.1); border: 2px solid #3b82f6; border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
+                <label style="display: block; font-weight: 700; color: #1e40af; margin-bottom: 0.5rem;">
+                    👶 Edad límite para menores:
+                </label>
+                <select id="age-limit" class="form-input" style="width: auto; display: inline-block;" onchange="updateAgeLabels()">
+                    <option value="10">Hasta 10 años</option>
+                    <option value="12" selected>Hasta 12 años</option>
+                    <option value="14">Hasta 14 años</option>
+                    <option value="16">Hasta 16 años</option>
+                    <option value="17">Hasta 17 años</option>
+                </select>
+                <small style="display: block; color: #64748b; margin-top: 0.5rem;">
+                    Los menores de esta edad pagarán tarifa reducida. A partir de esta edad pagan tarifa completa.
+                </small>
+            </div>
+            
+            <h4 style="margin: 1rem 0; color: #0891b2;">🎫 Entrada por Día</h4>
+            <div class="price-grid">
+                <div class="price-item">
+                    <div class="age-label">ADULTOS</div>
+                    <div class="age-range" id="adult-range">13+ años</div>
+                    <input type="number" class="price-input" id="adult-day" value="25000" min="0" step="1000">
+                </div>
+                <div class="price-item">
+                    <div class="age-label">MENORES</div>
+                    <div class="age-range" id="child-range">0-12 años</div>
+                    <input type="number" class="price-input" id="child-day" value="15000" min="0" step="1000">
+                </div>
+            </div>
+
+            <h4 style="margin: 1rem 0; color: #0891b2;">🎟️ Pase por Estadía (por día)</h4>
+            <div class="price-grid">
+                <div class="price-item">
+                    <div class="age-label">ADULTOS</div>
+                    <div class="age-range" id="adult-stay-range">13+ años</div>
+                    <input type="number" class="price-input" id="adult-stay" value="22000" min="0" step="1000">
+                </div>
+                <div class="price-item">
+                    <div class="age-label">MENORES</div>
+                    <div class="age-range" id="child-stay-range">0-12 años</div>
+                    <input type="number" class="price-input" id="child-stay" value="13000" min="0" step="1000">
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulador -->
+        <div class="simulator-section">
+            <h3>🧮 Simulador de Precios</h3>
+            
+            <div class="form-group">
+                <label for="entry-type">Tipo de Entrada:</label>
+                <select id="entry-type" class="form-input" onchange="calculatePrice()">
+                    <option value="day">🎫 Entrada por Día</option>
+                    <option value="stay">🎟️ Pase por Estadía</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="days-section" style="display: none;">
+                <label for="days-count">Cantidad de Días:</label>
+                <input type="number" id="days-count" class="form-input" value="1" min="1" max="30" onchange="calculatePrice()">
+            </div>
+
+            <div class="age-info" id="age-info">
+                <strong>💡 Categorías de Edad:</strong><br>
+                • <strong>Menores (0-12 años):</strong> Precio reducido<br>
+                • <strong>Adultos (13+ años):</strong> Precio completo
+            </div>
+
+            <h4 style="margin: 1rem 0; color: #0891b2;">👥 Cantidad de Personas por Edad</h4>
+            <div class="people-counter">
+                <div class="counter-item">
+                    <div class="counter-label" id="adult-counter-label">ADULTOS<br>(13+ años)</div>
+                    <input type="number" class="counter-input" id="adults-count" value="2" min="0" max="20" onchange="calculatePrice()">
+                </div>
+                <div class="counter-item">
+                    <div class="counter-label" id="child-counter-label">MENORES<br>(0-12 años)</div>
+                    <input type="number" class="counter-input" id="children-count" value="1" min="0" max="20" onchange="calculatePrice()">
+                </div>
+            </div>
+
+            <div class="result-box" id="result-box">
+                <div class="breakdown-label">DESGLOSE DE PRECIO</div>
+                <div class="result-breakdown" id="breakdown">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+                <div class="total-amount" id="total-amount">$75,000</div>
+                <div style="font-size: 1.1rem; opacity: 0.9;" id="total-people">Total: 3 personas</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <button class="btn" onclick="showImplementationNotes()">📝 Ver Notas de Implementación</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuración inicial
+        const entryTypeSelect = document.getElementById('entry-type');
+        const daysSection = document.getElementById('days-section');
+
+        entryTypeSelect.addEventListener('change', function() {
+            if (this.value === 'stay') {
+                daysSection.style.display = 'block';
+            } else {
+                daysSection.style.display = 'none';
+                document.getElementById('days-count').value = 1;
+            }
+            calculatePrice();
+        });
+
+        function formatCurrency(amount) {
+            return '$' + amount.toLocaleString('es-AR');
+        }
+
+        function updateAgeLabels() {
+            const ageLimit = parseInt(document.getElementById('age-limit').value);
+            const nextAge = ageLimit + 1;
+            
+            // Actualizar rangos de edad en configuración
+            document.getElementById('adult-range').textContent = `${nextAge}+ años`;
+            document.getElementById('child-range').textContent = `0-${ageLimit} años`;
+            document.getElementById('adult-stay-range').textContent = `${nextAge}+ años`;
+            document.getElementById('child-stay-range').textContent = `0-${ageLimit} años`;
+            
+            // Actualizar contadores
+            document.getElementById('adult-counter-label').innerHTML = `ADULTOS<br>(${nextAge}+ años)`;
+            document.getElementById('child-counter-label').innerHTML = `MENORES<br>(0-${ageLimit} años)`;
+            
+            // Actualizar info
+            document.getElementById('age-info').innerHTML = `
+                <strong>💡 Categorías de Edad:</strong><br>
+                • <strong>Menores (0-${ageLimit} años):</strong> Precio reducido<br>
+                • <strong>Adultos (${nextAge}+ años):</strong> Precio completo
+            `;
+            
+            calculatePrice();
+        }
+
+        function calculatePrice() {
+            const entryType = document.getElementById('entry-type').value;
+            const days = parseInt(document.getElementById('days-count').value) || 1;
+            const adults = parseInt(document.getElementById('adults-count').value) || 0;
+            const children = parseInt(document.getElementById('children-count').value) || 0;
+
+            // Obtener precios según tipo de entrada
+            let adultPrice, childPrice;
+            if (entryType === 'day') {
+                adultPrice = parseInt(document.getElementById('adult-day').value) || 0;
+                childPrice = parseInt(document.getElementById('child-day').value) || 0;
+            } else {
+                adultPrice = parseInt(document.getElementById('adult-stay').value) || 0;
+                childPrice = parseInt(document.getElementById('child-stay').value) || 0;
+            }
+
+            // Calcular subtotales
+            const adultSubtotal = adultPrice * adults * days;
+            const childSubtotal = childPrice * children * days;
+            const total = adultSubtotal + childSubtotal;
+            const totalPeople = adults + children;
+
+            // Actualizar desglose
+            const breakdown = document.getElementById('breakdown');
+            breakdown.innerHTML = '';
+
+            if (adults > 0) {
+                breakdown.innerHTML += `
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">${adults} Adulto${adults > 1 ? 's' : ''}</div>
+                        <div class="breakdown-value">${formatCurrency(adultSubtotal)}</div>
+                    </div>
+                `;
+            }
+
+            if (children > 0) {
+                breakdown.innerHTML += `
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">${children} Menor${children > 1 ? 'es' : ''}</div>
+                        <div class="breakdown-value">${formatCurrency(childSubtotal)}</div>
+                    </div>
+                `;
+            }
+
+            if (days > 1) {
+                breakdown.innerHTML += `
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">Días</div>
+                        <div class="breakdown-value">× ${days}</div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('total-amount').textContent = formatCurrency(total);
+            document.getElementById('total-people').textContent = `Total: ${totalPeople} persona${totalPeople !== 1 ? 's' : ''}`;
+        }
+
+        function showImplementationNotes() {
+            const ageLimit = document.getElementById('age-limit').value;
+            alert(`📋 NOTAS DE IMPLEMENTACIÓN:
+
+✅ VENTAJAS DEL SISTEMA SIMPLIFICADO:
+• Solo 2 categorías: Adultos y Menores
+• Edad límite configurable (${ageLimit} años en este momento)
+• Más simple para el personal de venta
+• Flexibilidad según política del balneario
+• Fácil configuración por el admin
+
+🔧 CAMBIOS NECESARIOS:
+• Modificar configuración de pileta (agregar ageLimit)
+• Actualizar modal de venta (2 contadores)
+• Cambiar cálculos de precio (sin bebés gratis)
+• Simplificar validaciones
+• Actualizar reportes
+
+💡 CONSIDERACIONES:
+• Edad límite: 10, 12, 14, 16 o 17 años
+• Descuentos por grupo siguen aplicando
+• Capacidad = total de personas
+• Sistema más simple y flexible
+
+✨ CONFIGURACIONES COMUNES:
+• Hasta 10 años: Parques acuáticos
+• Hasta 12 años: Balnearios familiares  
+• Hasta 16 años: Clubes deportivos
+
+¿Te gusta esta versión simplificada?`);
+        }
+
+        // Listeners para recalcular al cambiar precios
+        document.querySelectorAll('.price-input').forEach(input => {
+            input.addEventListener('input', calculatePrice);
+        });
+
+        // Inicialización
+        updateAgeLabels();
+        calculatePrice();
+    </script>
+</body>
+</html>

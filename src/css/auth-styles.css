@@ -1,0 +1,275 @@
+/* Estilos para el sistema de autenticación - Zeus Balneario */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+
+.login-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.login-header {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  padding: 30px;
+  text-align: center;
+}
+
+.login-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.login-header p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 16px;
+}
+
+.login-form {
+  padding: 30px;
+}
+
+.login-form .form-group {
+  margin-bottom: 20px;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-actions {
+  margin-top: 30px;
+}
+
+.login-form .btn {
+  width: 100%;
+  padding: 14px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login-form .btn:hover {
+  background: #2980b9;
+  transform: translateY(-1px);
+}
+
+.login-form .btn:active {
+  transform: translateY(0);
+}
+
+.error-message {
+  background: #fee;
+  border: 1px solid #f5c6c6;
+  border-radius: 6px;
+  padding: 12px;
+  color: #c0392b;
+  margin-top: 15px;
+  font-size: 14px;
+  display: none;
+}
+
+.login-help {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e1e8ed;
+  text-align: center;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Barra de usuario */
+#user-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  color: white;
+  padding: 8px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #ecf0f1;
+}
+
+.login-time {
+  color: #bdc3c7;
+  font-size: 12px;
+}
+
+.btn-logout {
+  background: rgba(231, 76, 60, 0.2);
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+/* Ajustar contenido principal para la barra de usuario */
+body.authenticated {
+  padding-top: 50px;
+}
+
+#container {
+  margin-top: 10px;
+}
+
+/* Elementos restringidos para operadores */
+body.operator-mode .admin-only {
+  display: none !important;
+}
+
+body.operator-mode .configuration-section {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.restricted-element {
+  display: none !important;
+}
+
+/* Indicador visual de modo operador */
+body.operator-mode #user-bar {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+}
+
+body.operator-mode #user-bar::after {
+  content: " (Modo Operador)";
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* Estados de reservas canceladas */
+.rental-cancelled {
+  opacity: 0.6;
+  background: #ffeaa7 !important;
+  position: relative;
+}
+
+.rental-cancelled::after {
+  content: "CANCELADA";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(231, 76, 60, 0.9);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.grid-cell.cancelled {
+  background: #fadbd8 !important;
+  color: #922b21;
+  text-decoration: line-through;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-modal {
+    width: 95%;
+    margin: 20px;
+  }
+  
+  .login-header {
+    padding: 20px;
+  }
+  
+  .login-header h2 {
+    font-size: 24px;
+  }
+  
+  .login-form {
+    padding: 20px;
+  }
+  
+  #user-bar {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 15px;
+  }
+  
+  body.authenticated {
+    padding-top: 80px;
+  }
+}

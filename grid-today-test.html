@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Destacar HOY en Grilla | Zeus Balneario</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .test-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            background: #f8fafc;
+        }
+
+        .test-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            text-align: center;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border-radius: 12px;
+        }
+
+        .grid-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .grid-table th,
+        .grid-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .grid-table th {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #475569;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .grid-table th:first-child {
+            background: #e2e8f0;
+            position: sticky;
+            left: 0;
+            z-index: 11;
+        }
+
+        .grid-table td:first-child {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #64748b;
+            position: sticky;
+            left: 0;
+            z-index: 9;
+        }
+
+        /* Estilos básicos para celdas */
+        .cell-available {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .cell-occupied {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        /* ========== OPCIONES DE DESTACAR HOY ========== */
+
+        /* Opción 1: Columna con fondo especial y borde grueso */
+        .today-option-1 {
+            background: linear-gradient(135deg, #fef3c7, #fbbf24) !important;
+            border: 3px solid #f59e0b !important;
+            box-shadow: inset 0 0 8px rgba(245, 158, 11, 0.3);
+            position: relative;
+        }
+
+        .today-option-1::before {
+            content: '🌟';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.7rem;
+        }
+
+        /* Opción 2: Columna con gradiente vibrante */
+        .today-option-2 {
+            background: linear-gradient(135deg, #ddd6fe, #8b5cf6) !important;
+            border: 2px solid #7c3aed !important;
+            color: #581c87 !important;
+            font-weight: 700 !important;
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .today-option-2::after {
+            content: 'HOY';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            font-size: 0.6rem;
+            background: #7c3aed;
+            color: white;
+            padding: 1px 3px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        /* Opción 3: Columna con animación sutil */
+        .today-option-3 {
+            background: linear-gradient(135deg, #ecfdf5, #10b981) !important;
+            border: 2px solid #059669 !important;
+            color: #064e3b !important;
+            animation: pulse-today 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes pulse-today {
+            0% { box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 16px rgba(16, 185, 129, 0.8); }
+            100% { box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+        }
+
+        .today-option-3::before {
+            content: '📅 HOY';
+            position: absolute;
+            bottom: 1px;
+            right: 1px;
+            font-size: 0.6rem;
+            background: #059669;
+            color: white;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        /* Opción 4: Columna con patrón de rayas */
+        .today-option-4 {
+            background: repeating-linear-gradient(
+                45deg,
+                #fed7e2,
+                #fed7e2 2px,
+                #f687b3 2px,
+                #f687b3 4px
+            ) !important;
+            border: 3px solid #be185d !important;
+            color: #831843 !important;
+            font-weight: 700 !important;
+            position: relative;
+        }
+
+        .today-option-4::after {
+            content: '🎯';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        /* Headers de HOY para cada opción */
+        .today-header-1 {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+            color: #92400e !important;
+            font-weight: 700 !important;
+            position: relative;
+        }
+
+        .today-header-1::before {
+            content: '⭐ ';
+        }
+
+        .today-header-2 {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+            color: white !important;
+            font-weight: 700 !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .today-header-2::before {
+            content: '👑 ';
+        }
+
+        .today-header-3 {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+            color: white !important;
+            font-weight: 700 !important;
+            animation: glow-header 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow-header {
+            from { box-shadow: 0 2px 8px rgba(16, 185, 129, 0.5); }
+            to { box-shadow: 0 4px 16px rgba(16, 185, 129, 0.8); }
+        }
+
+        .today-header-3::before {
+            content: '📅 ';
+        }
+
+        .today-header-4 {
+            background: linear-gradient(135deg, #f687b3, #be185d) !important;
+            color: white !important;
+            font-weight: 700 !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .today-header-4::before {
+            content: '🎯 ';
+        }
+
+        .today-header-4::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shine 3s ease-in-out infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e0f2fe, #81d4fa);
+            border: 2px solid #0288d1;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .info-text {
+            color: #01579b;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .grid-table {
+                font-size: 0.75rem;
+            }
+            
+            .grid-table th,
+            .grid-table td {
+                padding: 0.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏖️ Zeus Balneario - Test Destacar HOY</h1>
+        
+        <div class="info-box">
+            <div class="info-text">
+                🎯 Probando diferentes formas de destacar el día HOY en la grilla de recursos<br>
+                📅 HOY es la columna central en cada ejemplo
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="scrollToOption(1)">📋 Opción 1: Dorado con Estrella</button>
+            <button class="btn" onclick="scrollToOption(2)">👑 Opción 2: Púrpura Elegante</button>
+            <button class="btn" onclick="scrollToOption(3)">💚 Opción 3: Verde Animado</button>
+            <button class="btn" onclick="scrollToOption(4)">🎯 Opción 4: Rosa con Patrón</button>
+        </div>
+
+        <!-- Opción 1: Dorado con estrella -->
+        <div class="test-section" id="option-1">
+            <div class="test-title">📋 Opción 1: Fondo Dorado con Estrella</div>
+            <div class="grid-container">
+                <table class="grid-table">
+                    <thead>
+                        <tr>
+                            <th>Unidad</th>
+                            <th>Ayer</th>
+                            <th class="today-header-1">HOY</th>
+                            <th>Mañana</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>S-1</td>
+                            <td class="cell-available">Libre</td>
+                            <td class="cell-occupied today-option-1">Ocupada</td>
+                            <td class="cell-available">Libre</td>
+                        </tr>
+                        <tr>
+                            <td>S-2</td>
+                            <td class="cell-occupied">Ocupada</td>
+                            <td class="cell-available today-option-1">Libre</td>
+                            <td class="cell-occupied">Ocupada</td>
+                        </tr>
+                        <tr>
+                            <td>C-1</td>
+                            <td class="cell-available">Libre</td>
+                            <td class="cell-occupied today-option-1">Ocupada</td>
+                            <td class="cell-available">Libre</td>
+                        </tr>
+                        <tr>
+                            <td>C-2</td>
+                            <td class="cell-occupied">Ocupada</td>
+                            <td class="cell-available today-option-1">Libre</td>
+                            <td class="cell-available">Libre</td>
+                        </tr>
+                        <tr>
+                            <td>E-1</td>
+                            <td class="cell-available">Libre</td>
+                            <td class="cell-available today-option-1">Libre</td>
+                            <td class="cell-occupied">Ocupada</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Opción 2: Púrpura elegante -->
+        <div class="test-section" id="option-2">
+            <div class="test-title">👑 Opción 2: Púrpura Elegante con Badge</div>
+            <div class="grid-container">
+                <table class="grid-table">
+                    <thead>
+                        <tr>
+                            <th>Unidad</th>
+                            <th>Ayer</th>
+                            <th class="today-header-2">HOY</th>
+                            <th>Mañana</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>S-1</td>
+                            <td class="cell-available">Libre</td>
+                            <td class="cell-occupied today-option-2">Ocupada</td>
+                            <td class="cell-available">Libre</td>
+                        </tr>
+                        <tr>
+                            <td>S-2</td>
+                            <td class="cell-occupied">Ocupada</td>
+                            <td class="cell-available today-option-2">Libre</td>
+                            <td class="cell-occupied">Ocupada</td>
+                        </tr>
+                        <tr>
+                            <td>C-1</td>
+                            <td class="cell-available">Libre</td>
+                            <td class="cell-occupied today-option-2">Ocupada</td>
+                            <td class="cell-available">Libre</td>
+                        </tr>
+                        <tr>
+                            <td>C-2</td>
+                            <td class="cell-occupied">Ocupada</td>
+                            <td class="cell-available today-option-2">Libre</td>
+                            <td class="cell-available">Libre</td>
+                        </tr>
+                        <tr>
+                            <td>E-1</td>
+                            <td class="cell-available">Libre</td>
+                            <td class="cell-available today-option-2">Libre</td>
+                            <td class="cell-occupied">Ocupada</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Opción 3: Verde animado -->
+        <div class="test-section" id="option-3">
+            <div class="test-title">💚 Opción 3: Verde con Animación Sutil</div>
+            <div class="grid-container">
+                <table class="grid-table">
+                    <thead>
+                        <tr>
+                            <th>Unidad</th>
+                            <th>Ayer</th>
+                            <th class="today-header-3">HOY</th>
+                            <th>Mañana</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>S-1</td>
+                            <td class="cell-available">Libre</td>
+                            <td class="cell-occupied today-option-3">Ocupada</td>
+                            <td class="cell-available">Libre</td>
+                        </tr>
+                        <tr>
+                            <td>S-2</td>
+                            <td class="cell-occupied">Ocupada</td>
+                            <td class="cell-available today-option-3">Libre</td>
+                            <td class="cell-occupied">Ocupada</td>
+                        </tr>
+                        <tr>
+                            <td>C-1</td>
+                            <td class="cell-available">Libre</td>
+                            <td class="cell-occupied today-option-3">Ocupada</td>
+                            <td class="cell-available">Libre</td>
+                        </tr>
+                        <tr>
+                            <td>C-2</td>
+                            <td class="cell-occupied">Ocupada</td>
+                            <td class="cell-available today-option-3">Libre</td>
+                            <td class="cell-available">Libre</td>
+                        </tr>
+                        <tr>
+                            <td>E-1</td>
+                            <td class="cell-available">Libre</td>
+                            <td class="cell-available today-option-3">Libre</td>
+                            <td class="cell-occupied">Ocupada</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Opción 4: Rosa con patrón -->
+        <div class="test-section" id="option-4">
+            <div class="test-title">🎯 Opción 4: Rosa con Patrón y Efecto Brillo</div>
+            <div class="grid-container">
+                <table class="grid-table">
+                    <thead>
+                        <tr>
+                            <th>Unidad</th>
+                            <th>Ayer</th>
+                            <th class="today-header-4">HOY</th>
+                            <th>Mañana</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>S-1</td>
+                            <td class="cell-available">Libre</td>
+                            <td class="cell-occupied today-option-4">Ocupada</td>
+                            <td class="cell-available">Libre</td>
+                        </tr>
+                        <tr>
+                            <td>S-2</td>
+                            <td class="cell-occupied">Ocupada</td>
+                            <td class="cell-available today-option-4">Libre</td>
+                            <td class="cell-occupied">Ocupada</td>
+                        </tr>
+                        <tr>
+                            <td>C-1</td>
+                            <td class="cell-available">Libre</td>
+                            <td class="cell-occupied today-option-4">Ocupada</td>
+                            <td class="cell-available">Libre</td>
+                        </tr>
+                        <tr>
+                            <td>C-2</td>
+                            <td class="cell-occupied">Ocupada</td>
+                            <td class="cell-available today-option-4">Libre</td>
+                            <td class="cell-available">Libre</td>
+                        </tr>
+                        <tr>
+                            <td>E-1</td>
+                            <td class="cell-available">Libre</td>
+                            <td class="cell-available today-option-4">Libre</td>
+                            <td class="cell-occupied">Ocupada</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function scrollToOption(optionNumber) {
+            const element = document.getElementById(`option-${optionNumber}`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Agregar un efecto de highlight temporal
+                element.style.transform = 'scale(1.02)';
+                element.style.transition = 'transform 0.3s ease';
+                
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                }, 300);
+            }
+        }
+
+        // Auto-scroll inicial suave
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 500);
+        });
+    </script>
+</body>
+</html>

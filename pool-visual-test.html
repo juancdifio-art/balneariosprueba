@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏊 Pileta - Diseño Mejorado - Vista Previa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .pool-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ========== HEADER MEJORADO ========== */
+        .pool-header {
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.95) 0%, 
+                rgba(255,255,255,0.85) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .pool-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .pool-title-section h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .pool-subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* ========== NAVEGADOR DE FECHA MODERNO ========== */
+        .pool-date-navigator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .nav-button:active {
+            transform: scale(0.95);
+        }
+
+        .today-button {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .today-button:hover {
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .pool-current-date {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 1rem;
+            min-width: 200px;
+        }
+
+        .date-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .date-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 0.25rem;
+        }
+
+        /* ========== CARDS ESTADÍSTICAS RENOVADAS ========== */
+        .pool-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .pool-stat-card {
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.95) 0%, 
+                rgba(255,255,255,0.85) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pool-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4, #10b981);
+        }
+
+        .pool-stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 
+                0 32px 64px rgba(0,0,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+
+        .stat-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* ========== OCUPACIÓN VISUAL MEJORADA ========== */
+        .capacity-display {
+            text-align: center;
+        }
+
+        .capacity-number {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .capacity-number .current {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .capacity-number .separator {
+            font-size: 2rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .capacity-number .max {
+            font-size: 2rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .capacity-bar {
+            background: #e2e8f0;
+            border-radius: 50px;
+            height: 16px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .capacity-fill {
+            height: 100%;
+            border-radius: 50px;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(90deg, #10b981, #06b6d4);
+            position: relative;
+        }
+
+        .capacity-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.2) 0%, 
+                rgba(255,255,255,0) 50%, 
+                rgba(255,255,255,0.2) 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .capacity-text {
+            font-weight: 600;
+            color: #475569;
+            font-size: 1.1rem;
+        }
+
+        /* ========== INGRESOS MEJORADOS ========== */
+        .revenue-display {
+            text-align: center;
+        }
+
+        .revenue-amount {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #059669, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .revenue-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .revenue-details span {
+            padding: 0.5rem 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 12px;
+            font-weight: 600;
+            color: #1e40af;
+            font-size: 0.9rem;
+        }
+
+        .revenue-details .pending {
+            background: rgba(251, 191, 36, 0.1);
+            color: #92400e;
+        }
+
+        /* ========== CONFIGURACIÓN CARD ========== */
+        .config-display .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .config-item span {
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .config-item strong {
+            font-weight: 800;
+            color: #1e293b;
+            font-size: 1.1rem;
+        }
+
+        /* ========== BOTONES DE ACCIÓN MODERNOS ========== */
+        .pool-actions {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-pool {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-primary-pool {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary-pool:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary-pool {
+            background: linear-gradient(135deg, #64748b, #475569);
+            color: white;
+            box-shadow: 0 8px 24px rgba(100, 116, 139, 0.3);
+        }
+
+        .btn-secondary-pool:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px rgba(100, 116, 139, 0.4);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .pool-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .pool-date-navigator {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .pool-stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pool-actions {
+                flex-direction: column;
+            }
+            
+            .btn-pool {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* ========== EFECTOS ADICIONALES ========== */
+        .floating-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ========== MODAL MEJORADO ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-pool {
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.95) 0%, 
+                rgba(255,255,255,0.90) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 
+                0 32px 64px rgba(0,0,0,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.3);
+            transform: scale(0.8) translateY(40px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active .modal-pool {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            padding: 2rem 2rem 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-close {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .radio-card {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .radio-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .radio-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .radio-card input[type="radio"]:checked + .radio-content {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .radio-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .price-summary {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 2px solid #e5e7eb;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .price-row:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #1e293b;
+        }
+
+        .modal-footer {
+            padding: 1rem 2rem 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* ========== NOTIFICACIONES ========== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+            z-index: 2000;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .notification.warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+    </style>
+</head>
+<body>
+    <div class="pool-container">
+        <!-- HEADER MEJORADO -->
+        <div class="pool-header">
+            <div class="pool-header-content">
+                <div class="pool-title-section">
+                    <h1>🏊 Gestión de Pileta</h1>
+                    <p class="pool-subtitle">Control de aforo y ventas de entradas</p>
+                </div>
+                
+                <div class="pool-date-navigator">
+                    <button class="nav-button">◀️</button>
+                    <div class="pool-current-date">
+                        <span class="date-label">Fecha</span>
+                        <span class="date-value">Viernes, 1 de Noviembre 2024</span>
+                    </div>
+                    <button class="nav-button">▶️</button>
+                    <button class="nav-button today-button">📅 Hoy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ESTADÍSTICAS MEJORADAS -->
+        <div class="pool-stats-grid">
+            <!-- OCUPACIÓN -->
+            <div class="pool-stat-card floating-animation">
+                <div class="stat-header">
+                    <span class="stat-icon">👥</span>
+                    <h3>Ocupación del Día</h3>
+                </div>
+                <div class="capacity-display">
+                    <div class="capacity-number">
+                        <span class="current">32</span>
+                        <span class="separator">/</span>
+                        <span class="max">50</span>
+                    </div>
+                    <div class="capacity-bar">
+                        <div class="capacity-fill" style="width: 64%;"></div>
+                    </div>
+                    <span class="capacity-text">64% ocupado • 18 disponibles</span>
+                </div>
+            </div>
+
+            <!-- INGRESOS -->
+            <div class="pool-stat-card floating-animation" style="animation-delay: 0.2s;">
+                <div class="stat-header">
+                    <span class="stat-icon">💰</span>
+                    <h3>Ingresos del Día</h3>
+                </div>
+                <div class="revenue-display">
+                    <div class="revenue-amount">$487,500</div>
+                    <div class="revenue-details">
+                        <span>📋 8 entradas vendidas</span>
+                        <span>✅ 6 pagadas</span>
+                        <span class="pending">⏳ $90,000 pendiente</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONFIGURACIÓN -->
+            <div class="pool-stat-card floating-animation" style="animation-delay: 0.4s;">
+                <div class="stat-header">
+                    <span class="stat-icon">⚙️</span>
+                    <h3>Configuración</h3>
+                </div>
+                <div class="config-display">
+                    <div class="config-item">
+                        <span>Entrada día:</span>
+                        <strong>$25,000</strong>
+                    </div>
+                    <div class="config-item">
+                        <span>Pase estadía/día:</span>
+                        <strong>$22,000</strong>
+                    </div>
+                    <div class="config-item">
+                        <span>Capacidad máx:</span>
+                        <strong>50 personas</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTONES DE ACCIÓN MODERNOS -->
+        <div class="pool-actions">
+            <button class="btn-pool btn-primary-pool" onclick="showNewEntryModal()">
+                ➕ Vender Entrada
+            </button>
+            <button class="btn-pool btn-secondary-pool" onclick="showNotification('💰 Función de ventas de hoy', 'success')">
+                💰 Ventas de Hoy
+            </button>
+            <button class="btn-pool btn-secondary-pool" onclick="showNotification('⚙️ Función de configuración', 'success')">
+                ⚙️ Configuración
+            </button>
+        </div>
+
+        <!-- DEMO INFO -->
+        <div class="pool-stat-card" style="text-align: center; margin-top: 2rem;">
+            <h3 style="color: #1e293b; margin-bottom: 1rem;">🎨 Vista Previa del Diseño Mejorado</h3>
+            <p style="color: #64748b; font-size: 1.1rem; line-height: 1.6;">
+                Esta es una propuesta de mejora visual para el sistema de piletas.<br>
+                <strong>Características:</strong> Glassmorphism, animaciones suaves, gradientes modernos, 
+                mejor jerarquía visual y experiencia responsive.<br>
+                <strong style="color: #10b981;">¡Prueba el botón "Vender Entrada" para ver el modal mejorado!</strong>
+            </p>
+            <div style="margin-top: 1.5rem;">
+                <span style="background: rgba(59, 130, 246, 0.1); color: #1e40af; padding: 0.5rem 1rem; border-radius: 12px; font-weight: 600; margin: 0 0.5rem;">✨ Moderno</span>
+                <span style="background: rgba(16, 185, 129, 0.1); color: #059669; padding: 0.5rem 1rem; border-radius: 12px; font-weight: 600; margin: 0 0.5rem;">📱 Responsive</span>
+                <span style="background: rgba(168, 85, 247, 0.1); color: #7c3aed; padding: 0.5rem 1rem; border-radius: 12px; font-weight: 600; margin: 0 0.5rem;">🎯 Intuitivo</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE NUEVA ENTRADA -->
+    <div id="newEntryModal" class="modal-overlay">
+        <div class="modal-pool">
+            <div class="modal-header">
+                <h3>🏊 Nueva Entrada de Pileta</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Información del cliente -->
+                <div class="form-section">
+                    <h4>👤 Datos del Cliente</h4>
+                    <div class="form-group">
+                        <label for="client-name">Nombre completo *</label>
+                        <input type="text" id="client-name" class="form-input" placeholder="Juan Pérez" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="client-dni">DNI / Pasaporte</label>
+                        <input type="text" id="client-dni" class="form-input" placeholder="12345678">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-phone">Teléfono</label>
+                        <input type="tel" id="client-phone" class="form-input" placeholder="2262-123456">
+                    </div>
+                </div>
+
+                <!-- Tipo de entrada -->
+                <div class="form-section">
+                    <h4>🎫 Tipo de Entrada</h4>
+                    <div class="radio-group">
+                        <label class="radio-card">
+                            <input type="radio" name="entry-type" value="day" checked>
+                            <div class="radio-content">
+                                <span class="radio-icon">🎫</span>
+                                <div>
+                                    <strong>Entrada por Día</strong>
+                                    <div style="color: #64748b;">$25,000/persona</div>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="entry-type" value="stay">
+                            <div class="radio-content">
+                                <span class="radio-icon">🎟️</span>
+                                <div>
+                                    <strong>Pase por Estadía</strong>
+                                    <div style="color: #64748b;">$22,000/persona/día</div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Fecha -->
+                <div class="form-section" id="date-section">
+                    <h4>📅 Fecha</h4>
+                    <div class="form-group">
+                        <input type="date" id="entry-date" class="form-input" value="2025-11-01">
+                    </div>
+                </div>
+
+                <!-- Cantidad de personas -->
+                <div class="form-section">
+                    <h4>👥 Cantidad de Personas</h4>
+                    <div class="form-group">
+                        <input type="number" id="people-count" class="form-input" min="1" max="20" value="2" onchange="updatePrice()">
+                    </div>
+                    <div id="discount-info" style="color: #10b981; font-weight: 600; margin-top: 0.5rem; display: none;"></div>
+                </div>
+
+                <!-- Resumen de precio -->
+                <div class="form-section">
+                    <h4>💰 Resumen de Precio</h4>
+                    <div class="price-summary">
+                        <div class="price-row">
+                            <span>Precio base:</span>
+                            <span id="base-price">$50,000</span>
+                        </div>
+                        <div class="price-row" id="discount-row" style="display: none;">
+                            <span>Descuento por grupo:</span>
+                            <span id="discount-amount" style="color: #10b981;">-$0</span>
+                        </div>
+                        <div class="price-row">
+                            <span>Total a pagar:</span>
+                            <span id="total-price">$50,000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Método de pago -->
+                <div class="form-section">
+                    <h4>💳 Pago</h4>
+                    <div class="form-group">
+                        <label for="payment-method">Método de pago</label>
+                        <select id="payment-method" class="form-input">
+                            <option value="efectivo">💵 Efectivo</option>
+                            <option value="transferencia">🏦 Transferencia</option>
+                            <option value="tarjeta">💳 Tarjeta</option>
+                            <option value="mercadopago">🛒 MercadoPago</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Notas -->
+                <div class="form-section">
+                    <h4>📝 Notas (opcional)</h4>
+                    <div class="form-group">
+                        <textarea id="notes" class="form-input" rows="3" placeholder="Ej: Familia con niños pequeños"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn-modal btn-confirm" onclick="confirmEntry()">✅ Confirmar Venta</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de precios
+        const prices = {
+            dayPass: 25000,
+            stayPassPerDay: 22000
+        };
+
+        const discounts = {
+            3: 0.05,  // 5%
+            4: 0.10,  // 10%
+            5: 0.15   // 15%
+        };
+
+        function formatCurrency(amount) {
+            return '$' + amount.toLocaleString('es-AR');
+        }
+
+        function showNewEntryModal() {
+            const modal = document.getElementById('newEntryModal');
+            modal.classList.add('active');
+            updatePrice();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('newEntryModal');
+            modal.classList.remove('active');
+            
+            // Limpiar formulario
+            setTimeout(() => {
+                document.getElementById('client-name').value = '';
+                document.getElementById('client-dni').value = '';
+                document.getElementById('client-phone').value = '';
+                document.getElementById('people-count').value = '2';
+                document.getElementById('notes').value = '';
+                document.querySelector('input[name="entry-type"][value="day"]').checked = true;
+                updatePrice();
+            }, 300);
+        }
+
+        function updatePrice() {
+            const entryType = document.querySelector('input[name="entry-type"]:checked').value;
+            const peopleCount = parseInt(document.getElementById('people-count').value) || 1;
+            
+            const basePrice = entryType === 'day' ? prices.dayPass : prices.stayPassPerDay;
+            const subtotal = basePrice * peopleCount;
+            
+            // Calcular descuento
+            let discount = 0;
+            if (peopleCount >= 5) {
+                discount = discounts[5] || 0.15;
+            } else if (discounts[peopleCount]) {
+                discount = discounts[peopleCount];
+            }
+            
+            const discountAmount = subtotal * discount;
+            const total = subtotal - discountAmount;
+            
+            // Actualizar displays
+            document.getElementById('base-price').textContent = formatCurrency(subtotal);
+            
+            if (discount > 0) {
+                document.getElementById('discount-row').style.display = 'flex';
+                document.getElementById('discount-amount').textContent = '-' + formatCurrency(discountAmount) + ` (${Math.round(discount * 100)}%)`;
+                
+                const discountInfo = document.getElementById('discount-info');
+                discountInfo.style.display = 'block';
+                discountInfo.textContent = `🎉 Descuento del ${Math.round(discount * 100)}% por grupo aplicado`;
+            } else {
+                document.getElementById('discount-row').style.display = 'none';
+                document.getElementById('discount-info').style.display = 'none';
+            }
+            
+            document.getElementById('total-price').textContent = formatCurrency(total);
+        }
+
+        function confirmEntry() {
+            const clientName = document.getElementById('client-name').value.trim();
+            const peopleCount = parseInt(document.getElementById('people-count').value);
+            
+            if (!clientName) {
+                showNotification('Por favor ingresa el nombre del cliente', 'error');
+                return;
+            }
+            
+            if (peopleCount < 1 || peopleCount > 20) {
+                showNotification('La cantidad de personas debe ser entre 1 y 20', 'error');
+                return;
+            }
+            
+            // Simular venta exitosa
+            showNotification(`✅ Entrada registrada para ${clientName} (${peopleCount} personas)`, 'success');
+            closeModal();
+        }
+
+        function showNotification(message, type = 'success') {
+            // Crear notificación
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Mostrar con animación
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Ocultar después de 4 segundos
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 4000);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Listener para cambio de tipo de entrada
+            document.querySelectorAll('input[name="entry-type"]').forEach(radio => {
+                radio.addEventListener('change', updatePrice);
+            });
+            
+            // Listener para cantidad de personas
+            document.getElementById('people-count').addEventListener('input', updatePrice);
+            
+            // Cerrar modal al hacer click fuera
+            document.getElementById('newEntryModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

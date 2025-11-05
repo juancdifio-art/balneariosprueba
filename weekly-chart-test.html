@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Gráfico Semanal Mejorado | Zeus Balneario</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: 2px solid #2196f3;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .info-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1565c0;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-text {
+            color: #0d47a1;
+            font-weight: 500;
+        }
+
+        .chart-section {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .chart-container {
+            width: 100%;
+            min-height: 400px;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 2px solid #f1f5f9;
+            overflow: hidden;
+        }
+
+        .occupancy-chart {
+            width: 100%;
+            height: auto;
+        }
+
+        .chart-bar {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .chart-bar:hover {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            transform: translateY(-2px);
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏖️ Zeus Balneario - Vista Semanal Mejorada</h1>
+        
+        <div class="info-box">
+            <div class="info-title">📅 Nueva Configuración de Gráfico</div>
+            <div class="info-text">
+                <strong>2 días atrás</strong> + <strong>HOY</strong> + <strong>4 días adelante</strong> = <strong>7 días totales</strong><br>
+                ✨ Barras más anchas y porcentajes más legibles
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="generateWeekData()">🎲 Generar Datos Semanales</button>
+            <button class="btn" onclick="testCurrentWeek()">📊 Probar Semana Actual</button>
+        </div>
+
+        <div class="chart-section">
+            <div class="chart-title">📊 Gráfico de Ocupación Semanal (7 días)</div>
+            <div class="chart-container" id="weekly-chart"></div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"></div>
+                    <span>Hoy</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #06b6d4, #0891b2);"></div>
+                    <span>Excelente (80%+)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #10b981, #059669);"></div>
+                    <span>Buena (60-79%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #f59e0b, #d97706);"></div>
+                    <span>Media (30-59%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #ef4444, #dc2626);"></div>
+                    <span>Baja (0-29%)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función mejorada que simula la nueva configuración
+        function renderWeeklyOccupancyChart(data, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const width = container.clientWidth || 800;
+            const height = 400; // Más altura para barras más grandes
+            const padding = { top: 30, right: 30, bottom: 80, left: 50 }; // Más espacio abajo para etiquetas
+            const chartWidth = width - padding.left - padding.right;
+            const chartHeight = height - padding.top - padding.bottom;
+            
+            // Barras más anchas al tener solo 7 días
+            const barWidth = Math.max(60, (chartWidth / data.length) - 20); // Barras más anchas
+            const maxPercentage = 100;
+
+            let svg = `
+                <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" class="occupancy-chart">
+                    <defs>
+                        <!-- Gradientes modernos -->
+                        <linearGradient id="gradient-today" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#8b5cf6"/>
+                            <stop offset="100%" stop-color="#7c3aed"/>
+                        </linearGradient>
+                        <linearGradient id="gradient-excellent" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#06b6d4"/>
+                            <stop offset="100%" stop-color="#0891b2"/>
+                        </linearGradient>
+                        <linearGradient id="gradient-good" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#10b981"/>
+                            <stop offset="100%" stop-color="#059669"/>
+                        </linearGradient>
+                        <linearGradient id="gradient-medium" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#f59e0b"/>
+                            <stop offset="100%" stop-color="#d97706"/>
+                        </linearGradient>
+                        <linearGradient id="gradient-low" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ef4444"/>
+                            <stop offset="100%" stop-color="#dc2626"/>
+                        </linearGradient>
+                        
+                        <!-- Filtros para efectos -->
+                        <filter id="shadow-chart" x="-50%" y="-50%" width="200%" height="200%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="3" flood-opacity="0.3"/>
+                        </filter>
+                        <filter id="glow-chart" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    
+                    <!-- Fondo con patrón sutil -->
+                    <rect x="${padding.left}" y="${padding.top}" width="${chartWidth}" height="${chartHeight}" 
+                          fill="rgba(59, 130, 246, 0.05)" rx="8"/>
+                    
+                    <!-- Grid lines horizontales más elegantes -->
+                    <g stroke="#e2e8f0" stroke-width="1" opacity="0.7">
+                        <line x1="${padding.left}" y1="${padding.top}" x2="${width - padding.right}" y2="${padding.top}"/>
+                        <line x1="${padding.left}" y1="${padding.top + chartHeight/4}" x2="${width - padding.right}" y2="${padding.top + chartHeight/4}"/>
+                        <line x1="${padding.left}" y1="${padding.top + chartHeight/2}" x2="${width - padding.right}" y2="${padding.top + chartHeight/2}"/>
+                        <line x1="${padding.left}" y1="${padding.top + 3*chartHeight/4}" x2="${width - padding.right}" y2="${padding.top + 3*chartHeight/4}"/>
+                        <line x1="${padding.left}" y1="${height - padding.bottom}" x2="${width - padding.right}" y2="${height - padding.bottom}" stroke-width="2"/>
+                    </g>
+                    
+                    <!-- Eje Y mejorado -->
+                    <line x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${height - padding.bottom}" 
+                          stroke="#64748b" stroke-width="2"/>
+                    
+                    <!-- Etiquetas Y-axis con mejor tipografía -->
+                    <text x="${padding.left - 15}" y="${padding.top + 5}" text-anchor="end" font-size="14" font-weight="600" fill="#475569">100%</text>
+                    <text x="${padding.left - 15}" y="${padding.top + chartHeight/4 + 5}" text-anchor="end" font-size="13" fill="#64748b">75%</text>
+                    <text x="${padding.left - 15}" y="${padding.top + chartHeight/2 + 5}" text-anchor="end" font-size="13" fill="#64748b">50%</text>
+                    <text x="${padding.left - 15}" y="${padding.top + 3*chartHeight/4 + 5}" text-anchor="end" font-size="13" fill="#64748b">25%</text>
+                    <text x="${padding.left - 15}" y="${height - padding.bottom + 5}" text-anchor="end" font-size="14" font-weight="600" fill="#475569">0%</text>
+                    
+                    <!-- Barras mejoradas para 7 días -->
+            `;
+            
+            data.forEach((item, index) => {
+                const barHeight = Math.max(8, (item.percentage / maxPercentage) * chartHeight);
+                const x = padding.left + (index * (barWidth + 20)) + 10; // Más espacio entre barras
+                const y = height - padding.bottom - barHeight;
+                
+                // Seleccionar gradiente y efectos
+                let fillColor;
+                let filter = 'filter="url(#shadow-chart)"';
+                
+                if (item.isToday) {
+                    fillColor = 'url(#gradient-today)';
+                    filter = 'filter="url(#glow-chart)"';
+                } else if (item.percentage >= 80) {
+                    fillColor = 'url(#gradient-excellent)';
+                } else if (item.percentage >= 60) {
+                    fillColor = 'url(#gradient-good)';
+                } else if (item.percentage >= 30) {
+                    fillColor = 'url(#gradient-medium)';
+                } else {
+                    fillColor = 'url(#gradient-low)';
+                }
+                
+                svg += `
+                    <!-- Barra principal con efectos -->
+                    <rect 
+                        x="${x}" 
+                        y="${y}" 
+                        width="${barWidth}" 
+                        height="${barHeight}" 
+                        fill="${fillColor}"
+                        rx="8"
+                        ry="8"
+                        class="chart-bar"
+                        ${filter}
+                        style="cursor: pointer; transition: all 0.3s ease;"
+                    >
+                        <title>${item.dateLabel}: ${item.percentage}% (${item.occupied}/${item.total})</title>
+                    </rect>
+                    
+                    <!-- Highlight en la parte superior -->
+                    <rect 
+                        x="${x + 3}" 
+                        y="${y + 3}" 
+                        width="${barWidth - 6}" 
+                        height="12" 
+                        fill="rgba(255,255,255,0.4)"
+                        rx="6"
+                    />
+                    
+                    <!-- Etiqueta de porcentaje más grande -->
+                    <text 
+                        x="${x + barWidth / 2}" 
+                        y="${y - 10}" 
+                        text-anchor="middle" 
+                        font-size="14" 
+                        font-weight="800"
+                        fill="${item.isToday ? '#7c3aed' : '#374151'}"
+                    >${item.percentage}%</text>
+                    
+                    <!-- Etiqueta de fecha más visible -->
+                    <text 
+                        x="${x + barWidth / 2}" 
+                        y="${height - padding.bottom + 25}" 
+                        text-anchor="middle" 
+                        font-size="${item.isToday ? '15' : '13'}"
+                        font-weight="${item.isToday ? '800' : '600'}"
+                        fill="${item.isToday ? '#7c3aed' : '#64748b'}"
+                    >${item.dateLabel}</text>
+                    
+                    <!-- Ocupación detallada -->
+                    <text 
+                        x="${x + barWidth / 2}" 
+                        y="${height - padding.bottom + 45}" 
+                        text-anchor="middle" 
+                        font-size="11"
+                        font-weight="500"
+                        fill="#64748b"
+                    >${item.occupied}/${item.total}</text>
+                    
+                    ${item.isToday ? `
+                    <!-- Indicador especial para hoy más grande -->
+                    <circle 
+                        cx="${x + barWidth / 2}" 
+                        cy="${height - padding.bottom + 60}" 
+                        r="6" 
+                        fill="#7c3aed"
+                        filter="url(#glow-chart)"
+                    />
+                    ` : ''}
+                `;
+            });
+            
+            svg += `</svg>`;
+            container.innerHTML = svg;
+        }
+
+        // Generar datos de prueba para 7 días (2 antes + hoy + 4 después)
+        function generateWeeklyData() {
+            const today = new Date();
+            const data = [];
+            
+            // 2 días antes + hoy + 4 días después = 7 días totales
+            for (let i = -2; i <= 4; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() + i);
+                
+                const isToday = i === 0;
+                const isPast = i < 0;
+                const occupied = Math.floor(Math.random() * 45) + 15; // Entre 15 y 60
+                const total = 60;
+                const percentage = Math.round((occupied / total) * 100);
+                
+                data.push({
+                    dateLabel: formatDateLabel(date, isToday),
+                    percentage,
+                    occupied,
+                    total,
+                    isToday,
+                    isPast
+                });
+            }
+            
+            return data;
+        }
+
+        function formatDateLabel(date, isToday) {
+            if (isToday) return 'HOY';
+            
+            const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+            const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            return `${days[date.getDay()]} ${date.getDate()}/${months[date.getMonth()]}`;
+        }
+
+        // Funciones de control
+        function generateWeekData() {
+            const data = generateWeeklyData();
+            renderWeeklyOccupancyChart(data, 'weekly-chart');
+        }
+
+        function testCurrentWeek() {
+            generateWeekData();
+        }
+
+        // Inicializar gráfico
+        window.addEventListener('load', () => {
+            generateWeekData();
+        });
+
+        // Responsive
+        window.addEventListener('resize', () => {
+            setTimeout(() => {
+                generateWeekData();
+            }, 100);
+        });
+    </script>
+</body>
+</html>

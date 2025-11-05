@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard Mejorado | Zeus Balneario</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #10b981, #f59e0b, #ef4444);
+            opacity: 0.7;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .card-header .icon {
+            font-size: 2rem;
+            margin-right: 0.75rem;
+        }
+
+        .card-header h3 {
+            font-size: 1.1rem;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            margin-left: auto;
+            animation: pulse-live 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-live {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .big-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .trend {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .trend.up { color: #10b981; }
+        .trend.down { color: #ef4444; }
+
+        .breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .resource {
+            font-size: 0.85rem;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-to-goal {
+            margin-top: 1rem;
+        }
+
+        .goal-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .goal-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 4px;
+            transition: width 2s ease;
+        }
+
+        .predictions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .prediction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .prediction.warning {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+        }
+
+        .prediction .timeframe {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .prediction .value {
+            font-weight: 500;
+            color: #059669;
+        }
+
+        .prediction .confidence {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .quick-action {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 1rem 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: #1e293b;
+        }
+
+        .quick-action:hover {
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-action .icon {
+            font-size: 1.5rem;
+        }
+
+        .quick-action span:last-child {
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .weather-impact {
+            text-align: center;
+        }
+
+        .forecast {
+            font-size: 1.1rem;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .business-impact {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .business-impact.positive {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .business-impact.negative {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        .business-impact.neutral {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .alerts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: #fef3c7;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .alert-item.urgent {
+            background: #fecaca;
+        }
+
+        .alert-item.info {
+            background: #dbeafe;
+        }
+
+        .comparison-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-title {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 2rem;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .comparison-item h4 {
+            color: #475569;
+            margin-bottom: 1rem;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .old-dashboard h4 {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        .new-dashboard h4 {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(135deg, #64748b, #475569);
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+        }
+
+        .btn.secondary:hover {
+            box-shadow: 0 6px 20px rgba(100, 116, 139, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .big-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏖️ Zeus Balneario - Dashboard Mejorado</h1>
+            <p>Vista previa del nuevo dashboard inteligente y en tiempo real</p>
+        </div>
+
+        <div class="dashboard-container">
+            <!-- Ocupación en Tiempo Real -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <span class="icon">🏖️</span>
+                    <h3>Ocupación Actual</h3>
+                    <div class="live-indicator"></div>
+                </div>
+                <div class="card-content">
+                    <div class="big-number" id="occupancy-number">87%</div>
+                    <div class="trend up">↗️ +12% vs ayer mismo horario</div>
+                    <div class="breakdown">
+                        <div class="resource">🏖️ Sombrillas <span>92%</span></div>
+                        <div class="resource">⛺ Carpas <span>85%</span></div>
+                        <div class="resource">🚗 Estacionamiento <span>78%</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingresos con Meta -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <span class="icon">💰</span>
+                    <h3>Ingresos Hoy</h3>
+                </div>
+                <div class="card-content">
+                    <div class="big-number">$125.400</div>
+                    <div class="progress-to-goal">
+                        <div class="goal-bar">
+                            <div class="goal-progress" style="width: 73%"></div>
+                        </div>
+                        <span>73% del objetivo mensual ($520.000)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clima con Impacto -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <span class="icon">🌤️</span>
+                    <h3>28°C - Parcialmente Nublado</h3>
+                </div>
+                <div class="weather-impact">
+                    <div class="forecast">Día perfecto para la playa</div>
+                    <div class="business-impact positive">
+                        Impacto: +20% ocupación esperada
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones Rápidas -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <span class="icon">⚡</span>
+                    <h3>Acciones Rápidas</h3>
+                </div>
+                <div class="quick-actions-grid">
+                    <div class="quick-action" onclick="simulateAction('checkin')">
+                        <span class="icon">✅</span>
+                        <span>Check-in Rápido</span>
+                    </div>
+                    <div class="quick-action" onclick="simulateAction('alert')">
+                        <span class="icon">🚨</span>
+                        <span>Alerta Urgente</span>
+                    </div>
+                    <div class="quick-action" onclick="simulateAction('walkin')">
+                        <span class="icon">👥</span>
+                        <span>Cliente Directo</span>
+                    </div>
+                    <div class="quick-action" onclick="simulateAction('maintenance')">
+                        <span class="icon">🔧</span>
+                        <span>Mantenimiento</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predicciones IA -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <span class="icon">🔮</span>
+                    <h3>Predicciones IA</h3>
+                </div>
+                <div class="predictions-list">
+                    <div class="prediction">
+                        <span class="timeframe">Mañana</span>
+                        <span class="value">92% ocupación</span>
+                        <span class="confidence">95% confianza</span>
+                    </div>
+                    <div class="prediction">
+                        <span class="timeframe">Fin de semana</span>
+                        <span class="value">$280.000</span>
+                        <span class="confidence">Alto</span>
+                    </div>
+                    <div class="prediction warning">
+                        <span class="timeframe">⚠️ Domingo</span>
+                        <span class="value">Solo 45% ocupación</span>
+                        <span class="confidence">Promoción sugerida</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alertas Inteligentes -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <span class="icon">⚠️</span>
+                    <h3>Alertas (3)</h3>
+                </div>
+                <div class="alerts-list">
+                    <div class="alert-item urgent">
+                        🔴 Pago pendiente: Cliente Pérez ($15.000)
+                    </div>
+                    <div class="alert-item info">
+                        🔵 Mantenimiento S15 programado mañana
+                    </div>
+                    <div class="alert-item">
+                        🟡 Stock bajo: Protector solar (5 unidades)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <h2 class="comparison-title">📊 Comparación: Actual vs Nuevo Dashboard</h2>
+            <div class="comparison-grid">
+                <div class="comparison-item old-dashboard">
+                    <h4>Dashboard Actual</h4>
+                    <ul class="feature-list">
+                        <li>❌ Datos estáticos</li>
+                        <li>❌ Sin predicciones</li>
+                        <li>❌ Solo ocupación básica</li>
+                        <li>❌ Sin alertas contextuales</li>
+                        <li>❌ No considera clima</li>
+                        <li>❌ Sin acciones rápidas</li>
+                        <li>❌ Información fragmentada</li>
+                    </ul>
+                </div>
+                <div class="comparison-item new-dashboard">
+                    <h4>Dashboard Mejorado</h4>
+                    <ul class="feature-list">
+                        <li>✅ Actualización en tiempo real</li>
+                        <li>✅ Predicciones con IA básica</li>
+                        <li>✅ Ocupación detallada por tipo</li>
+                        <li>✅ Alertas inteligentes prioritizadas</li>
+                        <li>✅ Integración del clima</li>
+                        <li>✅ Panel de acciones rápidas</li>
+                        <li>✅ Vista consolidada e inteligente</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="simulateLiveData()">🔄 Simular Datos en Vivo</button>
+            <button class="btn secondary" onclick="resetDemo()">🔁 Reiniciar Demo</button>
+        </div>
+    </div>
+
+    <script>
+        let liveDataInterval;
+        let isLiveMode = false;
+
+        function simulateAction(action) {
+            const actions = {
+                checkin: 'Check-in realizado para cliente directo',
+                alert: 'Alerta de emergencia activada - Staff notificado',
+                walkin: 'Nuevo cliente sin reserva agregado a la cola',
+                maintenance: 'Modo mantenimiento activado para S15'
+            };
+
+            // Simular notificación
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #10b981, #059669);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = '✅ ' + actions[action];
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function simulateLiveData() {
+            if (isLiveMode) {
+                clearInterval(liveDataInterval);
+                isLiveMode = false;
+                document.querySelector('.controls .btn').textContent = '🔄 Simular Datos en Vivo';
+                return;
+            }
+
+            isLiveMode = true;
+            document.querySelector('.controls .btn').textContent = '⏸️ Detener Simulación';
+
+            liveDataInterval = setInterval(() => {
+                // Simular cambio de ocupación
+                const occupancyElement = document.getElementById('occupancy-number');
+                const currentValue = parseInt(occupancyElement.textContent);
+                const change = Math.floor(Math.random() * 6) - 3; // -3 a +3
+                const newValue = Math.max(0, Math.min(100, currentValue + change));
+                
+                animateNumber(occupancyElement, newValue);
+
+                // Simular cambio en recursos
+                const resources = document.querySelectorAll('.resource span');
+                resources.forEach(resource => {
+                    const current = parseInt(resource.textContent);
+                    const change = Math.floor(Math.random() * 4) - 2; // -2 a +2
+                    const newVal = Math.max(0, Math.min(100, current + change));
+                    resource.textContent = newVal + '%';
+                });
+
+                // Efecto visual de actualización
+                document.querySelector('.live-indicator').style.background = '#f59e0b';
+                setTimeout(() => {
+                    document.querySelector('.live-indicator').style.background = '#10b981';
+                }, 200);
+
+            }, 2000);
+        }
+
+        function animateNumber(element, targetValue) {
+            const startValue = parseInt(element.textContent);
+            const duration = 1000;
+            const startTime = performance.now();
+
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentValue = Math.round(startValue + (targetValue - startValue) * easeOutQuart);
+
+                element.textContent = currentValue + '%';
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+
+            requestAnimationFrame(updateNumber);
+        }
+
+        function resetDemo() {
+            if (liveDataInterval) {
+                clearInterval(liveDataInterval);
+                isLiveMode = false;
+            }
+            
+            document.getElementById('occupancy-number').textContent = '87%';
+            document.querySelector('.controls .btn').textContent = '🔄 Simular Datos en Vivo';
+            
+            const resources = document.querySelectorAll('.resource span');
+            const initialValues = ['92%', '85%', '78%'];
+            resources.forEach((resource, index) => {
+                resource.textContent = initialValues[index];
+            });
+        }
+
+        // Agregar estilos de animación
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Inicializar efectos visuales
+        window.addEventListener('load', () => {
+            // Animar progreso de meta al cargar
+            setTimeout(() => {
+                document.querySelector('.goal-progress').style.width = '73%';
+            }, 500);
+        });
+    </script>
+</body>
+</html>
